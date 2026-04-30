@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
     const password_hash = await bcrypt.hash(password, 10);
     const unique_login_id = await generateUniqueLoginId();
     const user_id = uuidv4();
-    const is_approved = isPg ? 'false' : '0'; // Boolean maps to 0 in SQLite
+    const is_approved = isPg ? 'true' : '1'; // Auto-approve users
     const is_active = isPg ? 'true' : '1';
 
     // Insert User
@@ -86,7 +86,7 @@ router.post('/register', async (req, res) => {
     }
 
     res.status(201).json({ 
-      message: 'Registration successful. Waiting for admin approval.',
+      message: 'Registration successful.',
       unique_login_id 
     });
 
@@ -96,7 +96,7 @@ router.post('/register', async (req, res) => {
       for (const admin of admins) {
         await query(
           "INSERT INTO notifications (notification_id, user_id, type, title, message, link_url, is_read) VALUES ($1, $2, $3, $4, $5, $6, false)",
-          [uuidv4(), admin.user_id, 'new_user_registration', 'New User Registered', `A new ${userType}, ${username}, has registered and is waiting for approval.`, '/admin/management']
+          [uuidv4(), admin.user_id, 'new_user_registration', 'New User Registered', `A new ${userType}, ${username}, has registered.`, '/admin/management']
         );
       }
     } catch (notifyErr) {
