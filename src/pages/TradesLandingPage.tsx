@@ -146,7 +146,7 @@ export const TradesLandingPage: React.FC = () => {
                                         <h3 className="text-xl font-bold text-gray-900">{pro.username}</h3>
                                         <div className="flex items-center gap-1 text-amber-500">
                                             <Star size={14} fill="currentColor" />
-                                            <span className="text-sm font-black">{pro.overall_rating_avg?.toFixed(1) || '0.0'}</span>
+                                            <span className="text-sm font-black">{Number(pro.overall_rating_avg || 0).toFixed(1)}</span>
                                             <span className="text-xs text-gray-400 font-bold ml-1">{pro.total_reviews_count || 0} reviews</span>
                                         </div>
                                     </div>

@@ -155,7 +155,7 @@ export const FavoritesPage: React.FC = () => {
                                                 <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{fav.username}</h3>
                                                 <div className="flex items-center gap-1 text-amber-500">
                                                     <Star size={14} fill="currentColor" />
-                                                    <span className="text-xs font-bold">{fav.overall_rating_avg?.toFixed(1) || '0.0'}</span>
+                                                    <span className="text-xs font-bold">{Number(fav.overall_rating_avg || 0).toFixed(1)}</span>
                                                     <span className="text-[10px] text-gray-400 font-normal ml-1">Trust: {fav.trust_score}%</span>
                                                 </div>
                                             </div>

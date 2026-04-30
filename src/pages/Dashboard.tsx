@@ -123,7 +123,7 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <div className="text-right">
                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Reputation</span>
-                    <div className="text-3xl font-black text-blue-400">{stats.success_rate?.toFixed(0) || 0}%</div>
+                    <div className="text-3xl font-black text-blue-400">{Number(stats.success_rate || 0).toFixed(0)}%</div>
                 </div>
             </div>
             <div>
@@ -264,7 +264,7 @@ export const Dashboard: React.FC = () => {
             <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
                 <div>
                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Avg. per month</p>
-                   <p className="text-xl font-black text-gray-900">L${(stats.monthly_earnings_chart?.reduce((acc: any, curr: any) => acc + curr.amount, 0) / (stats.monthly_earnings_chart?.length || 1)).toFixed(0)}</p>
+                   <p className="text-xl font-black text-gray-900">L${Number((stats.monthly_earnings_chart?.reduce((acc: any, curr: any) => acc + Number(curr.amount || 0), 0) / (stats.monthly_earnings_chart?.length || 1)) || 0).toFixed(0)}</p>
                 </div>
                 <Link to="/transactions" className="p-3 bg-gray-50 text-gray-900 rounded-2xl hover:bg-black hover:text-white transition-all">
                     <ArrowRight size={20} />

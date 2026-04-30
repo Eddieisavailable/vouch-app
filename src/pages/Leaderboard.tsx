@@ -147,7 +147,7 @@ export const LeaderboardPage: React.FC = () => {
                                     </Link>
                                     <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-sm">
                                         <div className="flex items-center gap-1 font-bold text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
-                                            <Star size={14} fill="currentColor" /> {tp.overall_rating_avg?.toFixed(1) || '0.0'}
+                                            <Star size={14} fill="currentColor" /> {Number(tp.overall_rating_avg || 0).toFixed(1)}
                                         </div>
                                         <div className="flex items-center gap-1 font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
                                             <ShieldCheck size={14} /> {tp.trust_score}% Trust

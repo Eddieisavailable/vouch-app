@@ -339,9 +339,9 @@ export const UserProfileView: React.FC = () => {
                                <span className="text-gray-500">{label}</span>
                                <div className="flex items-center gap-3">
                                   <div className="w-32 bg-gray-100 h-2 rounded-full overflow-hidden">
-                                      <div className="bg-yellow-400 h-full" style={{ width: `${(val / 5) * 100}%` }}></div>
+                                      <div className="bg-yellow-400 h-full" style={{ width: `${(Number(val) / 5) * 100}%` }}></div>
                                   </div>
-                                  <span className="text-gray-900 w-6 text-right">{val?.toFixed(1) || '0.0'}</span>
+                                  <span className="text-gray-900 w-6 text-right">{Number(val || 0).toFixed(1)}</span>
                                </div>
                             </div>
                           ))}
