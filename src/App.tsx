@@ -109,7 +109,7 @@ function LayoutWrapper({ children, hideSidebar = false }: { children: React.Reac
                 >
                   <div className="p-4 flex items-center justify-between border-b border-gray-100">
                     <span className="text-sm font-black uppercase tracking-widest text-vouch-blue">Menu</span>
-                    <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gray-50 rounded-xl transition-colors">
+                    <button title="Close Menu" onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gray-50 rounded-xl transition-colors">
                       <X size={20} className="text-gray-500" />
                     </button>
                   </div>
@@ -125,9 +125,9 @@ function LayoutWrapper({ children, hideSidebar = false }: { children: React.Reac
           </AnimatePresence>
         )}
 
-        <main className={`flex-1 px-0 py-6 md:p-8 xl:p-10 overflow-y-auto max-w-[2560px] mx-auto w-full transition-all duration-300 ${!hideSidebar ? (isSidebarCollapsed ? 'lg:pl-[72px] xl:pl-[72px] pb-[76px] lg:pb-8' : 'lg:pl-[72px] xl:pl-[240px] pb-[76px] lg:pb-8') : ''}`}>
-           {children}
-        </main>
+<main className={`flex-1 px-4 py-6 md:p-8 xl:p-10 overflow-y-auto max-w-[2560px] mx-auto w-full transition-all duration-300 ${!hideSidebar ? (isSidebarCollapsed ? 'lg:pl-[72px] xl:pl-[72px] pb-[76px] lg:pb-8' : 'lg:pl-[72px] xl:pl-[240px] pb-[76px] lg:pb-8') : ''}`}>
+   {children}
+</main>
       </div>
 
       {/* Mobile Bottom Navigation */}
