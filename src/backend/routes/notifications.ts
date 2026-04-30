@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { query } from '../db.js';
+import { query, isPg } from '../db.js';
 import { requireAuth } from './auth.js';
 
 const router = Router();
@@ -55,10 +55,10 @@ router.put('/read-all', requireAuth, async (req, res) => {
       [(req as any).user.user_id]
     );
     // Cleanup old ones (optional per spec)
-    await query(
-      "DELETE FROM notifications WHERE user_id = $1 AND is_read = true AND read_at < datetime('now', '-30 days')",
-      [(req as any).user.user_id]
-    );
+    const cleanupQuery = isPg
+      ? "DELETE FROM notifications WHERE user_id = $1 AND is_read = true AND read_at < CURRENT_TIMESTAMP - interval '30 days'"
+      : "DELETE FROM notifications WHERE user_id = $1 AND is_read = true AND read_at < datetime('now', '-30 days')";
+    await query(cleanupQuery, [(req as any).user.user_id]);
     res.json({ message: 'All marked as read' });
   } catch (error) {
     console.error('Error marking all read:', error);
