@@ -130,7 +130,7 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute right-0 top-14 w-[340px] bg-white rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden z-[100]"
+                    className="hidden lg:flex items-center gap-3 p-1.5 pr-3 hover:bg-gray-50 rounded-full transition-all group border border-transparent hover:border-gray-100"
                   >
                     <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                       <span className="text-sm font-bold text-gray-900">Notifications</span>

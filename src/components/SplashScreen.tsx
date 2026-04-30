@@ -37,7 +37,7 @@ export const SplashScreen: React.FC = () => {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
               <img 
-                src="https://ais-pre-5xennj5vm5gwe76i3cyqfb-159706747447.europe-west3.run.app/assets/logo_vouch_blue.png" 
+                src="/logo.png" 
                 alt="Vouch" 
                 className="w-full h-full object-contain"
               />
