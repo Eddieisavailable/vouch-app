@@ -14,6 +14,33 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const searchRef = React.useRef<HTMLDivElement>(null);
+  const notifRef = React.useRef<HTMLDivElement>(null);
+  const userRef = React.useRef<HTMLDivElement>(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as HTMLElement;
+      
+      if (searchRef.current && !searchRef.current.contains(target)) {
+        setIsSearchExpanded(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(target)) {
+        setShowNotifDropdown(false);
+      }
+      if (userRef.current && !userRef.current.contains(target)) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const fetchNotifs = async () => {
     if (auth.isAuthenticated) {
@@ -85,10 +112,13 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
 
         <div className="flex items-center gap-3 lg:gap-4">
           {/* Search Bar - Responsive Implementation */}
-          <div className="relative group">
-            <div className={`flex items-center bg-gray-50 border transition-all duration-300 rounded-2xl overflow-hidden ${isSearchExpanded ? 'w-64 border-vouch-blue/30 bg-white shadow-sm' : 'w-10 xl:w-80 border-transparent xl:bg-gray-50 xl:border-gray-100'} h-10`}>
+          <div ref={searchRef} className="relative group search-container">
+            <div className={`flex items-center bg-gray-50 border transition-all duration-300 rounded-2xl overflow-hidden ${isSearchExpanded ? 'w-56 sm:w-64 border-vouch-blue/30 bg-white shadow-sm' : 'w-10 xl:w-80 border-transparent xl:bg-gray-50 xl:border-gray-100'} h-10`}>
               <button 
-                onClick={() => setIsSearchExpanded(true)} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSearchExpanded(!isSearchExpanded);
+                }} 
                 className={`w-10 flex items-center justify-center shrink-0 ${isSearchExpanded || searchQuery ? 'text-vouch-blue' : 'text-gray-400'}`}
               >
                 <Search size={18} />
@@ -99,7 +129,6 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchExpanded(true)}
-                onBlur={() => !searchQuery && setIsSearchExpanded(false)}
                 className={`bg-transparent outline-none text-sm placeholder-gray-400 h-full w-full pr-4 ${!isSearchExpanded ? 'hidden xl:block' : 'block'}`}
               />
             </div>
@@ -108,9 +137,15 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
           <div className="w-[1px] h-6 bg-gray-200 mx-1 hidden lg:block"></div>
 
           {/* Notification Bell */}
-          <div className="relative">
+          <div ref={notifRef} className="relative notif-container">
             <button 
-              onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowNotifDropdown(!showNotifDropdown);
+                if (showUserDropdown) setShowUserDropdown(false);
+                if (isSearchExpanded) setIsSearchExpanded(false);
+              }}
               className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-vouch-blue hover:bg-blue-50 rounded-full transition-all relative group"
             >
               <Bell size={20} className="group-hover:scale-110 transition-transform" />
@@ -123,15 +158,13 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
 
             <AnimatePresence>
               {showNotifDropdown && (
-                <>
-                  <div className="fixed inset-0 z-[90]" onClick={() => setShowNotifDropdown(false)}></div>
-                  <motion.div 
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="hidden lg:flex items-center gap-3 p-1.5 pr-3 hover:bg-gray-50 rounded-full transition-all group border border-transparent hover:border-gray-100"
-                  >
+                <motion.div 
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="absolute right-[-60px] sm:right-0 top-12 w-[90vw] sm:w-[340px] max-w-[380px] bg-white rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden z-[130]"
+                >
                     <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                       <span className="text-sm font-bold text-gray-900">Notifications</span>
                       <Link to="/notifications" onClick={() => setShowNotifDropdown(false)} className="text-xs font-bold text-vouch-blue hover:underline">View All</Link>
@@ -156,7 +189,6 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
                       )}
                     </div>
                   </motion.div>
-                </>
               )}
             </AnimatePresence>
           </div>
@@ -164,10 +196,16 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
           <div className="w-[1px] h-6 bg-gray-200 mx-1"></div>
 
           {/* User Profile Area */}
-          <div className="relative">
+          <div ref={userRef} className="relative user-dropdown-container">
             {/* Desktop dropdown trigger */}
             <button 
-              onClick={() => setShowUserDropdown(!showUserDropdown)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowUserDropdown(!showUserDropdown);
+                if (showNotifDropdown) setShowNotifDropdown(false);
+                if (isSearchExpanded) setIsSearchExpanded(false);
+              }}
               className="hidden lg:flex items-center gap-3 p-1.5 pr-3 hover:bg-gray-50 rounded-full transition-all group border border-transparent hover:border-gray-100"
             >
               <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-gray-100 to-gray-50 border border-gray-200 shrink-0 flex items-center justify-center">
@@ -203,15 +241,13 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
 
             <AnimatePresence>
               {showUserDropdown && (
-                <>
-                  <div className="fixed inset-0 z-[90]" onClick={() => setShowUserDropdown(false)}></div>
-                  <motion.div 
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute right-0 top-14 w-60 bg-white rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden z-[100]"
-                  >
+                <motion.div 
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="absolute right-0 top-14 w-60 bg-white rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden z-[120]"
+                >
                     <div className="p-4 border-b border-gray-100">
                       <p className="text-sm font-bold text-gray-900 truncate">@{auth.user?.username}</p>
                       <button onClick={copyNodeId} className="flex items-center gap-1.5 text-xs text-gray-500 mt-1 hover:text-vouch-blue group/id transition-colors group">
@@ -246,7 +282,6 @@ export const TopHeader: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggle
                       </button>
                     </div>
                   </motion.div>
-                </>
               )}
             </AnimatePresence>
           </div>
